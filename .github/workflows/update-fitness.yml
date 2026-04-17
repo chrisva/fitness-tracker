@@ -1,0 +1,33 @@
+name: Update Fitness Data
+
+on:
+  schedule:
+    - cron: '0 * * * *'   # every hour
+  workflow_dispatch:        # also run manually from GitHub UI
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write       # needed to commit fitness.json back to the repo
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run update script
+        run: python scripts/update_fitness.py
+        # When you add Notion: pass the token as an env var
+        # env:
+        #   NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+
+      - name: Commit updated fitness.json
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git diff --quiet || (git add fitness-tracker/data/fitness.json && git commit -m "chore: update fitness data [skip ci]")
+          git push

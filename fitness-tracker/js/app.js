@@ -154,5 +154,11 @@ fetch('data/fitness.json')
     buildWorkoutList(data.recentWorkouts);
     initCharts(data);
     initRangeSwitcher(data);
+
+    if (data.today._updated) {
+      const t = new Date(data.today._updated);
+      document.getElementById('last-updated').textContent =
+        `Updated ${t.toLocaleString()}`;
+    }
   })
   .catch(() => console.error('Could not load fitness.json'));
