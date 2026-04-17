@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FitPulse — Your Fitness Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg-1: #ff9a8b;
+    --bg-2: #ff6a88;
+    --bg-3: #ff99ac;
+    --card: rgba(255, 255, 255, 0.92);
+    --text: #2b2d42;
+    --muted: #6b7280;
+    --accent-1: #ff6b6b;
+    --accent-2: #4ecdc4;
+    --accent-3: #ffe66d;
+    --accent-4: #a78bfa;
+    --accent-5: #45b7d1;
+    --shadow: 0 10px 30px rgba(0,0,0,0.12);
+    --radius: 18px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--text);
+    background: linear-gradient(135deg, var(--bg-1), var(--bg-2), var(--bg-3));
+    background-attachment: fixed;
+    min-height: 100vh;
+    padding: 24px;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  h1 {
+    margin: 0;
+    font-size: 2rem;
+    color: white;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .greeting {
+    color: white;
+    opacity: 0.95;
+    font-size: 1rem;
+  }
+  .controls {
+    display: flex;
+    gap: 8px;
+    background: var(--card);
+    padding: 6px;
+    border-radius: 999px;
+    box-shadow: var(--shadow);
+  }
+  .controls button {
+    border: none;
+    background: transparent;
+    padding: 8px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+  .controls button.active {
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-4));
+    color: white;
+  }
+  .controls button:hover:not(.active) {
+    background: rgba(0,0,0,0.05);
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s;
+  }
+  .stat-card:hover { transform: translateY(-4px); }
+  .stat-card .icon {
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+  }
+  .stat-card .label {
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .stat-card .value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-top: 4px;
+  }
+  .stat-card .trend {
+    font-size: 0.85rem;
+    margin-top: 6px;
+    font-weight: 600;
+  }
+  .trend.up { color: #10b981; }
+  .trend.down { color: #ef4444; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 900px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+  }
+  .card h2 {
+    margin: 0 0 16px;
+    font-size: 1.1rem;
+    color: var(--text);
+  }
+  .chart-wrap { position: relative; height: 280px; }
+
+  .activity-list { list-style: none; padding: 0; margin: 0; }
+  .activity-list li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+  .activity-list li:last-child { border-bottom: none; }
+  .activity-list .emoji {
+    font-size: 1.5rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--accent-3), var(--accent-2));
+    border-radius: 50%;
+  }
+  .activity-list .name { font-weight: 600; flex: 1; }
+  .activity-list .meta { color: var(--muted); font-size: 0.85rem; }
+
+  footer {
+    text-align: center;
+    color: white;
+    margin-top: 24px;
+    opacity: 0.8;
+    font-size: 0.85rem;
+  }
+</style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>💪 FitPulse</h1>
+      <div class="greeting" id="greeting">Welcome back! Let's crush today's goals.</div>
+    </div>
+    <div class="controls" role="tablist">
+      <button data-range="week" class="active">Week</button>
+      <button data-range="month">Month</button>
+      <button data-range="year">Year</button>
+    </div>
+  </header>
+
+  <section class="stats">
+    <div class="stat-card">
+      <div class="icon">👟</div>
+      <div class="label">Steps Today</div>
+      <div class="value" id="stat-steps">8,432</div>
+      <div class="trend up">↑ 12% vs yesterday</div>
+    </div>
+    <div class="stat-card">
+      <div class="icon">🔥</div>
+      <div class="label">Calories Burned</div>
+      <div class="value" id="stat-cal">2,145</div>
+      <div class="trend up">↑ 8% vs yesterday</div>
+    </div>
+    <div class="stat-card">
+      <div class="icon">❤️</div>
+      <div class="label">Avg Heart Rate</div>
+      <div class="value" id="stat-hr">72 bpm</div>
+      <div class="trend down">↓ 3% vs yesterday</div>
+    </div>
+    <div class="stat-card">
+      <div class="icon">😴</div>
+      <div class="label">Sleep</div>
+      <div class="value" id="stat-sleep">7h 24m</div>
+      <div class="trend up">↑ 15 min</div>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h2>Steps Over Time</h2>
+      <div class="chart-wrap"><canvas id="stepsChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h2>Activity Breakdown</h2>
+      <div class="chart-wrap"><canvas id="activityChart"></canvas></div>
+    </div>
+  </section>
+
+  <section class="grid" style="margin-top: 16px;">
+    <div class="card">
+      <h2>Heart Rate & Calories</h2>
+      <div class="chart-wrap"><canvas id="hrChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h2>Recent Workouts</h2>
+      <ul class="activity-list">
+        <li><span class="emoji">🏃</span><div class="name">Morning Run<div class="meta">5.2 km · 28 min</div></div></li>
+        <li><span class="emoji">🧘</span><div class="name">Yoga Flow<div class="meta">45 min · 180 cal</div></div></li>
+        <li><span class="emoji">🚴</span><div class="name">Cycling<div class="meta">12 km · 35 min</div></div></li>
+        <li><span class="emoji">🏋️</span><div class="name">Strength Training<div class="meta">50 min · 320 cal</div></div></li>
+        <li><span class="emoji">🏊</span><div class="name">Swimming<div class="meta">1 km · 25 min</div></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>Built with Chart.js · Demo data for illustration</footer>
+
+<script>
+  // Sample data for each range
+  const data = {
+    week: {
+      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      steps: [7200, 8400, 6500, 9800, 10200, 12500, 8432],
+      hr: [68, 72, 70, 75, 73, 78, 72],
+      cal: [1800, 2100, 1700, 2300, 2400, 2800, 2145]
+    },
+    month: {
+      labels: ['Wk 1', 'Wk 2', 'Wk 3', 'Wk 4'],
+      steps: [54000, 62000, 58000, 71000],
+      hr: [71, 73, 70, 74],
+      cal: [14000, 15800, 14500, 17200]
+    },
+    year: {
+      labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+      steps: [220000,210000,245000,260000,275000,290000,310000,295000,280000,265000,245000,250000],
+      hr: [70,71,72,73,74,75,76,75,74,73,72,71],
+      cal: [58000,55000,62000,66000,70000,74000,79000,75000,71000,67000,62000,63000]
+    }
+  };
+
+  const palette = ['#ff6b6b', '#4ecdc4', '#ffe66d', '#a78bfa', '#45b7d1'];
+
+  // Steps line chart
+  const stepsCtx = document.getElementById('stepsChart').getContext('2d');
+  const stepsGradient = stepsCtx.createLinearGradient(0, 0, 0, 280);
+  stepsGradient.addColorStop(0, 'rgba(255, 107, 107, 0.5)');
+  stepsGradient.addColorStop(1, 'rgba(255, 107, 107, 0.02)');
+
+  const stepsChart = new Chart(stepsCtx, {
+    type: 'line',
+    data: {
+      labels: data.week.labels,
+      datasets: [{
+        label: 'Steps',
+        data: data.week.steps,
+        borderColor: '#ff6b6b',
+        backgroundColor: stepsGradient,
+        borderWidth: 3,
+        tension: 0.4,
+        fill: true,
+        pointBackgroundColor: '#ff6b6b',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        pointRadius: 5,
+        pointHoverRadius: 7
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+
+  // Activity doughnut chart
+  const activityChart = new Chart(document.getElementById('activityChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Running', 'Cycling', 'Yoga', 'Strength', 'Swimming'],
+      datasets: [{
+        data: [30, 20, 15, 25, 10],
+        backgroundColor: palette,
+        borderWidth: 0,
+        hoverOffset: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '65%',
+      plugins: {
+        legend: { position: 'bottom', labels: { padding: 12, usePointStyle: true } }
+      }
+    }
+  });
+
+  // Heart rate + calories bar+line combo
+  const hrChart = new Chart(document.getElementById('hrChart'), {
+    data: {
+      labels: data.week.labels,
+      datasets: [
+        {
+          type: 'bar',
+          label: 'Calories',
+          data: data.week.cal,
+          backgroundColor: 'rgba(78, 205, 196, 0.7)',
+          borderRadius: 8,
+          yAxisID: 'y'
+        },
+        {
+          type: 'line',
+          label: 'Heart Rate (bpm)',
+          data: data.week.hr,
+          borderColor: '#a78bfa',
+          backgroundColor: '#a78bfa',
+          borderWidth: 3,
+          tension: 0.4,
+          yAxisID: 'y1',
+          pointRadius: 4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { usePointStyle: true } } },
+      scales: {
+        y: { position: 'left', beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+        y1: { position: 'right', beginAtZero: false, grid: { display: false } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+
+  // Range switcher
+  document.querySelectorAll('.controls button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.controls button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const range = btn.dataset.range;
+      const d = data[range];
+      stepsChart.data.labels = d.labels;
+      stepsChart.data.datasets[0].data = d.steps;
+      stepsChart.update();
+      hrChart.data.labels = d.labels;
+      hrChart.data.datasets[0].data = d.cal;
+      hrChart.data.datasets[1].data = d.hr;
+      hrChart.update();
+    });
+  });
+
+  // Friendly greeting
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('greeting').textContent = `${greeting}! Let's crush today's goals.`;
+</script>
+</body>
+</html>
