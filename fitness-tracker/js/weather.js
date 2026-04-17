@@ -1,5 +1,3 @@
-const MET_USER_AGENT = 'FitPulse/1.0 github.com/chrisva/fitness-tracker';
-
 const WMO_ICONS = {
   clearsky: '☀️', fair: '🌤️', partlycloudy: '⛅', cloudy: '☁️',
   fog: '🌫️', lightrainshowers: '🌦️', rainshowers: '🌧️',
@@ -48,14 +46,21 @@ function renderSlot(slot, label) {
     </div>`;
 }
 
-function renderError(msg) {
-  document.getElementById('weather-widget').innerHTML =
-    `<div class="weather-error">⚠️ ${msg}</div>`;
+function renderError(msg, retryable = false) {
+  document.getElementById('weather-widget').innerHTML = `
+    <div class="weather-error">⚠️ ${msg}
+      ${retryable ? '<button onclick="loadWeather()" style="margin-left:12px;padding:4px 10px;border:none;border-radius:8px;cursor:pointer;font-size:0.8rem;">Retry</button>' : ''}
+    </div>`;
 }
 
 async function loadWeather() {
   const widget = document.getElementById('weather-widget');
   widget.innerHTML = '<div class="weather-loading">Locating…</div>';
+
+  if (!navigator.geolocation) {
+    renderError('Geolocation is not supported by this browser.');
+    return;
+  }
 
   let coords;
   try {
@@ -63,11 +68,16 @@ async function loadWeather() {
       navigator.geolocation.getCurrentPosition(
         p => resolve(p.coords),
         err => reject(err),
-        { timeout: 8000 }
+        { timeout: 10000, maximumAge: 60000 }
       )
     );
-  } catch {
-    renderError('Location access denied — enable it to see weather.');
+  } catch (err) {
+    const msgs = {
+      1: 'Location permission denied — click the lock icon in your browser address bar to allow it.',
+      2: 'Location unavailable — your device could not determine its position.',
+      3: 'Location request timed out — try again.',
+    };
+    renderError(msgs[err.code] ?? `Location error (${err.message}).`, err.code !== 1);
     return;
   }
 
@@ -76,14 +86,15 @@ async function loadWeather() {
 
   let data;
   try {
+    // Note: User-Agent is a forbidden header in browsers and is silently dropped.
+    // met.no identifies the caller via the Referer header, which browsers set automatically.
     const res = await fetch(
-      `https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat.toFixed(4)}&lon=${lon.toFixed(4)}`,
-      { headers: { 'User-Agent': MET_USER_AGENT } }
+      `https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat.toFixed(4)}&lon=${lon.toFixed(4)}`
     );
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     data = await res.json();
-  } catch {
-    renderError('Could not reach met.no — try again later.');
+  } catch (err) {
+    renderError(`Could not reach met.no (${err.message}) — try again later.`, true);
     return;
   }
 
