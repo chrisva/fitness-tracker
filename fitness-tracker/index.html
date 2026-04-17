@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitPulse — Your Fitness Dashboard</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>💪 FitPulse</h1>
+      <div class="greeting" id="greeting">Welcome back! Let's crush today's goals.</div>
+    </div>
+    <div class="controls" role="tablist">
+      <button data-range="week" class="active">Week</button>
+      <button data-range="month">Month</button>
+      <button data-range="year">Year</button>
+    </div>
+  </header>
+
+  <div id="weather-widget"></div>
+
+  <section class="stats">
+    <div class="stat-card" id="card-steps">
+      <div class="icon">👟</div>
+      <div class="label">Steps Today</div>
+      <div class="value" id="stat-steps">—</div>
+      <div class="trend up"></div>
+    </div>
+    <div class="stat-card" id="card-cal">
+      <div class="icon">🔥</div>
+      <div class="label">Calories Burned</div>
+      <div class="value" id="stat-cal">—</div>
+      <div class="trend up"></div>
+    </div>
+    <div class="stat-card" id="card-hr">
+      <div class="icon">❤️</div>
+      <div class="label">Avg Heart Rate</div>
+      <div class="value" id="stat-hr">—</div>
+      <div class="trend down"></div>
+    </div>
+    <div class="stat-card" id="card-sleep">
+      <div class="icon">😴</div>
+      <div class="label">Sleep</div>
+      <div class="value" id="stat-sleep">—</div>
+      <div class="trend up"></div>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h2>Steps Over Time</h2>
+      <div class="chart-wrap"><canvas id="stepsChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h2>Activity Breakdown</h2>
+      <div class="chart-wrap"><canvas id="activityChart"></canvas></div>
+    </div>
+  </section>
+
+  <section class="grid" style="margin-top: 16px;">
+    <div class="card">
+      <h2>Heart Rate &amp; Calories</h2>
+      <div class="chart-wrap"><canvas id="hrChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h2>Recent Workouts</h2>
+      <ul class="activity-list" id="workout-list"></ul>
+    </div>
+  </section>
+
+  <footer>Built with Chart.js · Data from fitness.json</footer>
+
+  <script src="js/app.js"></script>
+  <script src="js/weather.js"></script>
+</body>
+</html>
