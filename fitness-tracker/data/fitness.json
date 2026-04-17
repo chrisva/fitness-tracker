@@ -1,43 +1,195 @@
 {
   "today": {
-    "steps": 8432,
-    "calories": 2145,
-    "heartRate": 72,
-    "sleep": { "hours": 7, "minutes": 24 }
+    "steps": 10178,
+    "calories": 2036,
+    "heartRate": 81,
+    "sleep": {
+      "hours": 8,
+      "minutes": 58
+    },
+    "_updated": "2026-04-17T15:22:57Z"
   },
   "trends": {
-    "steps": { "direction": "up", "percent": 12 },
-    "calories": { "direction": "up", "percent": 8 },
-    "heartRate": { "direction": "down", "percent": 3 },
-    "sleep": { "direction": "up", "minutes": 15 }
+    "steps": {
+      "direction": "up",
+      "percent": 12
+    },
+    "calories": {
+      "direction": "up",
+      "percent": 8
+    },
+    "heartRate": {
+      "direction": "down",
+      "percent": 3
+    },
+    "sleep": {
+      "direction": "up",
+      "minutes": 15
+    }
   },
   "week": {
-    "labels": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-    "steps": [7200, 8400, 6500, 9800, 10200, 12500, 8432],
-    "heartRate": [68, 72, 70, 75, 73, 78, 72],
-    "calories": [1800, 2100, 1700, 2300, 2400, 2800, 2145]
+    "labels": [
+      "Sat",
+      "Sun",
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri"
+    ],
+    "steps": [
+      7019,
+      11252,
+      8477,
+      7421,
+      10403,
+      6559,
+      6586
+    ],
+    "heartRate": [
+      78,
+      74,
+      68,
+      66,
+      73,
+      70,
+      69
+    ],
+    "calories": [
+      2488,
+      1782,
+      2012,
+      2951,
+      2141,
+      2707,
+      2594
+    ]
   },
   "month": {
-    "labels": ["Wk 1", "Wk 2", "Wk 3", "Wk 4"],
-    "steps": [54000, 62000, 58000, 71000],
-    "heartRate": [71, 73, 70, 74],
-    "calories": [14000, 15800, 14500, 17200]
+    "labels": [
+      "Wk 1",
+      "Wk 2",
+      "Wk 3",
+      "Wk 4"
+    ],
+    "steps": [
+      54000,
+      62000,
+      58000,
+      71000
+    ],
+    "heartRate": [
+      71,
+      73,
+      70,
+      74
+    ],
+    "calories": [
+      14000,
+      15800,
+      14500,
+      17200
+    ]
   },
   "year": {
-    "labels": ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
-    "steps": [220000,210000,245000,260000,275000,290000,310000,295000,280000,265000,245000,250000],
-    "heartRate": [70,71,72,73,74,75,76,75,74,73,72,71],
-    "calories": [58000,55000,62000,66000,70000,74000,79000,75000,71000,67000,62000,63000]
+    "labels": [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ],
+    "steps": [
+      220000,
+      210000,
+      245000,
+      260000,
+      275000,
+      290000,
+      310000,
+      295000,
+      280000,
+      265000,
+      245000,
+      250000
+    ],
+    "heartRate": [
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      75,
+      74,
+      73,
+      72,
+      71
+    ],
+    "calories": [
+      58000,
+      55000,
+      62000,
+      66000,
+      70000,
+      74000,
+      79000,
+      75000,
+      71000,
+      67000,
+      62000,
+      63000
+    ]
   },
   "activityBreakdown": {
-    "labels": ["Running", "Cycling", "Yoga", "Strength", "Swimming"],
-    "data": [30, 20, 15, 25, 10]
+    "labels": [
+      "Running",
+      "Cycling",
+      "Yoga",
+      "Strength",
+      "Swimming"
+    ],
+    "data": [
+      30,
+      20,
+      15,
+      25,
+      10
+    ]
   },
   "recentWorkouts": [
-    { "emoji": "🏃", "name": "Morning Run", "meta": "5.2 km · 28 min" },
-    { "emoji": "🧘", "name": "Yoga Flow", "meta": "45 min · 180 cal" },
-    { "emoji": "🚴", "name": "Cycling", "meta": "12 km · 35 min" },
-    { "emoji": "🏋️", "name": "Strength Training", "meta": "50 min · 320 cal" },
-    { "emoji": "🏊", "name": "Swimming", "meta": "1 km · 25 min" }
+    {
+      "emoji": "\ud83c\udfc3",
+      "name": "Morning Run",
+      "meta": "5.2 km \u00b7 28 min"
+    },
+    {
+      "emoji": "\ud83e\uddd8",
+      "name": "Yoga Flow",
+      "meta": "45 min \u00b7 180 cal"
+    },
+    {
+      "emoji": "\ud83d\udeb4",
+      "name": "Cycling",
+      "meta": "12 km \u00b7 35 min"
+    },
+    {
+      "emoji": "\ud83c\udfcb\ufe0f",
+      "name": "Strength Training",
+      "meta": "50 min \u00b7 320 cal"
+    },
+    {
+      "emoji": "\ud83c\udfca",
+      "name": "Swimming",
+      "meta": "1 km \u00b7 25 min"
+    }
   ]
 }
