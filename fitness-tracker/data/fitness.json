@@ -1,13 +1,13 @@
 {
   "today": {
-    "steps": 12079,
-    "calories": 3146,
-    "heartRate": 75,
+    "steps": 6326,
+    "calories": 1653,
+    "heartRate": 64,
     "sleep": {
       "hours": 8,
-      "minutes": 38
+      "minutes": 53
     },
-    "_updated": "2026-09-13T07:52:26Z"
+    "_updated": "2026-09-13T13:00:48Z"
   },
   "trends": {
     "steps": {
